@@ -1,0 +1,15 @@
+# Append AFTER the style preset to evaluate the complete 200-time protocol.
+dataset:
+  frame_limit: 0
+evaluation:
+  enabled: true
+  require_full_sequence: true
+  required_frames: 200
+  device: cpu
+  # Fill these with trusted local files. No evaluation model is downloaded.
+  lpips:
+    alexnet_weights: ""
+  raft:
+    weights: ""
+  artscore:
+    weights: ""

@@ -1,0 +1,22 @@
+# Additional opt-in experiment configuration. Does not alter train.py defaults.
+curves:
+  protocol: mags-curves-v1
+  seeds: [1234, 2345, 3456]
+  frame_count: 200
+  window_size: 2
+  resolution: 256
+  sh_updates: 2500
+  geometry_updates: 2000
+  schedule_warmup: 500
+  evaluate_every_percent: 5
+  probe_frames: 20
+  checkpoint_every_updates: 500
+  A:
+    windows: [2, 4, 8, 12, 16]
+    resolutions: [256, 384, 512]
+    warmup_updates: 10
+    measured_updates: 50
+  C:
+    coverage: [1, 5, 10, 20, 40]
+    heldout_ranges: [[80, 100], [160, 180]]
+    pair_gap: 2

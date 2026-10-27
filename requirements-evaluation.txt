@@ -1,0 +1,7 @@
+# Optional evaluation/plotting dependencies; install in the working environment.
+lpips
+scikit-image
+matplotlib
+scipy
+scikit-learn
+# Collection-level ArtFID additionally uses the authors' art-fid package.

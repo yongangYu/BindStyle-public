@@ -1,0 +1,336 @@
+dataset:
+  eval: true
+  data_device: cuda
+  test_per_iter: 1000
+  save_per_iter: 5000
+  render_per_iter: 5000
+  white_background: false
+  quiet: false
+  frame_limit: 10
+
+# Disabled for legacy runs. The split style preset enables a clearly marked
+# pilot; config/evaluation/paper.yaml selects the full-sequence paper protocol.
+evaluation:
+  enabled: false
+  compute_metrics: true
+  fail_on_error: false
+  device: cpu
+  method: Ours
+  variant: full
+  required_frames: 200
+  require_full_sequence: false
+  image_size: 256
+  fixed_camera_index: 0
+  short_gap: 2
+  long_gap: 20
+  view_times: 10
+  view_yaws: [0, 5, 35, 60, 90, 95, 125, 150]
+  narrow_degrees: [0, 10]
+  wide_degrees: [30, 60]
+  max_pairs_per_bin: 20
+  seed: 2026
+  crop_padding: 0.1
+  mask_erosion: 3
+  minimum_coverage: 0.05
+  depth_relative_tolerance: 0.01
+  depth_absolute_tolerance: 0.0001
+  fb_alpha: 0.01
+  fb_beta: 0.5
+  histogram:
+    bins: 64
+    sigma: 0.02
+    size: 150
+  lpips:
+    alexnet_weights: ""
+  raft:
+    weights: ""
+    updates: 12
+  artscore:
+    weights: ""
+  cfsd:
+    enabled: false
+    weights: ""
+    feature_end: 12
+    size: 128
+
+model:
+  sh_degree: 3
+
+optim:
+  random_bg: false
+  iterations: 40000
+  batch_size: 1
+  warm_up: 1000
+  disable_deformer: true
+
+  joint_style_update:
+    enabled: false
+
+  mesh_style_update:
+    enabled: false
+    mode: dynamic_canonical_jacobian
+    start_checkpoint: ""
+    style_path: ""
+    start_iter: 1
+    end_iter: 0
+    window_size: 4
+    shared_noise_seed: 4321
+    resume_state: true
+    lr: 0.0005
+    laplacian_jitter: 0.00000001
+    style_weight: 1.0
+    jacobian_weight: 10.0
+    poisson_weight: 1.0
+    flip_weight: 100.0
+    delta_weight: 0.0
+    grad_clip: 1.0
+    apply_to_gaussian: true
+    freeze_gaussians: true
+    freeze_deformer: true
+    use_deformer: true
+    sds:
+      enabled: true
+      provider: sdxl_ip_adapter
+      gradient_mode: csd
+      model_name: stabilityai/stable-diffusion-xl-base-1.0
+      ip_adapter_name: h94/IP-Adapter
+      ip_adapter_subfolder: sdxl_models
+      ip_adapter_weight_name: ip-adapter_sdxl.bin
+      image_encoder_folder: image_encoder
+      style_path: ""
+      cache_dir: ""
+      local_files_only: false
+      revision: ""
+      variant: fp16
+      token: ""
+      prompt: ""
+      negative_prompt: ""
+      guidance_scale: 7.0
+      ip_adapter_scale: 1.0
+      t_min: 0.2
+      t_max: 0.65
+      image_size: 512
+      half_precision: true
+      vae_half_precision: false
+      vae_latent_mode: mode
+      sds_grad_clip: 1.0
+      offload_condition_encoders: true
+
+  gaussian_style_update:
+    enabled: false
+    supervision_mode: diffusion
+    appearance:
+      loss_type: nnfm
+      weight: 1.0
+      grad_clip: 1.0
+      image_size: 256
+      layers: [11, 13, 15]
+      chunk_size: 512
+      crop_padding: 0.1
+      vgg_weights_path: ""
+      allow_download: false
+      offload_teacher: true
+    parameterization: direct
+    guidance_mode: csd
+    train_sh: true
+    start_checkpoint: ""
+    start_ply: ""
+    static_ply_reset_basis_dim: 0
+    style_path: ""
+    start_iter: 1
+    end_iter: 0
+    use_deformer: false
+    dc_only_iterations: 0
+    lr_dc: 0.002
+    lr_rest: 0.0002
+    sds_weight: 2.0
+    dc_reg_weight: 0.0
+    rest_reg_weight: 0.0
+    grad_clip: 5.0
+    direct_geometry:
+      enabled: true
+      start_iter: 1001
+      lr_uvw: 0.0001
+      lr_scaling: 0.00005
+      lr_rotation: 0.00005
+    canonical_geometry:
+      enabled: false
+      start_iter: 1001
+      lr_uv: 0.0001
+      lr_normal: 0.0002
+      lr_scaling: 0.00005
+      lr_rotation: 0.00005
+      max_barycentric_logit: 0.25
+      max_normal_edge_ratio: 0.10
+      max_log_scaling: 0.10
+      max_rotation_degrees: 5.0
+      uv_weight: 1.0
+      normal_weight: 1.0
+      scaling_weight: 1.0
+      rotation_weight: 1.0
+      smooth_weight: 0.1
+    gt_mesh_trajectory:
+      enabled: false
+      window_size: 4
+      shared_noise_seed: 2468
+      deformer_mode: "frozen"
+    outer_loop:
+      enabled: false
+      outer_iterations: 5
+      inner_iterations: 1000
+      lr_decay: 0.9
+      reset_optimizer_each_outer: false
+      noise_bank_size: 4
+      resample_noise_bank_each_outer: true
+      base_seed: 1234
+      dc_only_outer_iterations: 0
+      resume_outer_state: true
+      style_strength_schedule: [1.0, 1.2, 1.4, 1.6, 2.0]
+      guidance_scale_schedule: [5.0, 6.0, 7.0, 7.0, 7.0]
+      ip_adapter_scale_schedule: [0.8, 0.9, 1.0, 1.0, 1.0]
+      timestep_curriculum:
+        - [0.50, 0.75]
+        - [0.45, 0.70]
+        - [0.40, 0.65]
+        - [0.35, 0.60]
+        - [0.30, 0.55]
+    sds:
+      enabled: true
+      provider: sdxl_ip_adapter
+      gradient_mode: csd
+      model_name: stabilityai/stable-diffusion-xl-base-1.0
+      motion_adapter_name: guoyww/animatediff-motion-adapter-sdxl-beta
+      motion_adapter_variant: fp16
+      controlnet_model_name: diffusers/controlnet-depth-sdxl-1.0
+      controlnet_variant: fp16
+      controlnet_conditioning_scale: 0.7
+      video_window_size: 4
+      ip_adapter_name: h94/IP-Adapter
+      ip_adapter_subfolder: sdxl_models
+      ip_adapter_weight_name: ip-adapter_sdxl.bin
+      image_encoder_folder: image_encoder
+      style_path: ""
+      cache_dir: ""
+      local_files_only: false
+      revision: ""
+      variant: fp16
+      token: ""
+      prompt: ""
+      negative_prompt: ""
+      guidance_scale: 7.0
+      ip_adapter_scale: 1.0
+      t_min: 0.2
+      t_max: 0.65
+      image_size: 512
+      half_precision: true
+      vae_half_precision: false
+      vae_latent_mode: mode
+      sds_grad_clip: 1.0
+      offload_condition_encoders: true
+
+  style_branch:
+    enabled: true
+    lr: 0.0001
+    hidden_dim: 128
+    feature_delta_scale: 0.05
+    grad_clip: 1.0
+    content_view_mode: fixed
+    content_reference_index: 0
+    nnfm_style_weight: 0.05
+    nnfm_content_weight: 0.005
+    nnfm_loss_name: nnfm_loss
+    vgg_block: 2
+    nnfm_scale_factor: 0.5
+    nnfm_start_iter: ${optim.warm_up}
+    img_tv_weight: 0.0
+    clip_mesh_align_weight: 0.01
+    clip_mesh_start_iter: ${optim.warm_up}
+    clip_model: ViT-B/32
+    mesh_encoder_lr: 0.0001
+    mesh_encoder_hidden_dim: 256
+    mesh_encoder_max_points: 4096
+    mesh_encoder_grad_clip: 1.0
+
+  style_binding:
+    enabled: false
+    mode: 2d
+    style_path: ""
+    lr: 0.0001
+    style_dim: 32
+    hidden_dim: 128
+    delta_scale: 0.05
+    loss_weight: 0.05
+    loss_scale: 0.5
+    style_content_align_weight: 1.0
+    style_content_align_layer: -1
+    train_until_warm_up: true
+    grad_clip: 1.0
+
+  optim_uvw:
+    lr: 0.00016
+    scheduler_args:
+      lr_init: 0.00016
+      lr_final: 0.0000016
+      lr_delay_mult: 0.1
+      lr_max_steps: ${optim.iterations}
+  optim_features:
+    lr: 0.0025
+  optim_opacity:
+    lr: 0.05
+  optim_scaling:
+    lr: 0.005
+  optim_rotation:
+    lr: 0.001
+  optim_mesh_feat:
+    lr: 0.001
+    
+  densify_from_iter: 100
+  densification_interval: 100
+  densify_until_iter: 15000
+  opacity_reset_start_iter: 300
+  opacity_reset_interval: 3000
+  
+  size_threshold: 20
+  densify_grad_threshold: 0.0002
+  min_opacity: 0.005
+  max_n_gauss: 150000
+  
+  offset_start_iter: 400
+  
+  lambda_ssim: 0.2
+  lambda_perceptual: 0.05
+  lambda_scaling: 1.0
+
+  spatial_lr_scale: 5
+
+  percent_dense: 0.01
+
+pipe:
+  convert_SHs_python: False
+  compute_cov3D_python: False
+  debug: False
+
+
+loss:
+  lambda_ssim: 0.2
+
+
+deform:
+  lr_init: 0.00024
+  lr_final: 0.000024
+  lr_delay_mult: 0.1
+  lr_max_steps: ${optim.iterations}
+  D: 8
+  W: 256
+  input_ch: 3
+  output_ch: 59
+  is_blender: True
+  multires: 10
+  pred_opacity: False
+  pred_color: True
+  max_d_scale: -1
+  pose_embed_dim: 32
+  uvw_deform_D: 8
+  uvw_deform_W: 256
+  mesh_deform_D: 8
+  mesh_deform_W: 256

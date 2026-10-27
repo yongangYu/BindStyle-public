@@ -1,0 +1,13 @@
+dataset:
+  name: hook
+  type: Blender
+  extension: .png
+  source_path: dataset/dnerf/hook/
+  mesh_path: dataset/dnerf/hook/train_meshes/r_000.ply
+  mesh_alpha: 100
+  resolution: 2
+    white_background: false
+model:
+  model_path: outputs/hook
+optim:
+  batch_size: 2

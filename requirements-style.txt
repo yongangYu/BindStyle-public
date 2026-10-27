@@ -1,0 +1,13 @@
+# Dependency inventory, not a tested version lock. Keep the working Torch/CUDA pair.
+-r requirements.txt
+numpy
+Pillow
+tqdm
+tensorboard
+imageio
+diffusers
+transformers
+accelerate
+safetensors
+huggingface-hub
+# Install compatible torch/torchvision and the CUDA extensions separately.

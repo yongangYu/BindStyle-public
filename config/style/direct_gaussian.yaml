@@ -1,0 +1,71 @@
+# Load after 3dgs.yaml and the dataset config. Model weights remain local.
+model:
+  model_path: outputs/jumpingjacks-direct-gaussian-style
+optim:
+  iterations: 5000
+  batch_size: 1
+  disable_deformer: true
+  mesh_style_update:
+    enabled: false
+  joint_style_update:
+    enabled: false
+  gaussian_style_update:
+    enabled: true
+    parameterization: direct
+    guidance_mode: csd
+    train_sh: true
+    start_checkpoint: checkpoints/content/iteration_40000.pth
+    style_path: dataset/styles/2.jpg
+    start_iter: 1
+    end_iter: 0
+    use_deformer: false
+    dc_only_iterations: 0
+    lr_dc: 0.002
+    lr_rest: 0.0002
+    sds_weight: 1.0
+    dc_reg_weight: 0.0
+    rest_reg_weight: 0.0
+    grad_clip: 1.0
+    canonical_geometry:
+      enabled: false
+    direct_geometry:
+      enabled: true
+      start_iter: 1001
+      lr_uvw: 0.0001
+      lr_scaling: 0.00005
+      lr_rotation: 0.00005
+    gt_mesh_trajectory:
+      enabled: true
+      window_size: 2
+      deformer_mode: "off"
+    outer_loop:
+      enabled: false
+    sds:
+      enabled: true
+      provider: sdxl_animatediff_controlnet
+      gradient_mode: csd
+      model_name: models/stable-diffusion-xl-base-1.0
+      motion_adapter_name: models/animatediff-motion-adapter-sdxl-beta
+      controlnet_model_name: models/controlnet-depth-sdxl-1.0
+      controlnet_conditioning_scale: 0.35
+      video_window_size: 2
+      ip_adapter_name: models/IP-Adapter
+      ip_adapter_subfolder: sdxl_models
+      ip_adapter_weight_name: ip-adapter_sdxl.bin
+      image_encoder_folder: image_encoder
+      local_files_only: true
+      guidance_scale: 7.0
+      ip_adapter_scale: 1.0
+      t_min: 0.2
+      t_max: 0.65
+      image_size: 256
+      half_precision: true
+      vae_half_precision: false
+      vae_latent_mode: mode
+      sds_grad_clip: 1.0
+      offload_condition_encoders: true
+dataset:
+  frame_limit: 10
+  render_per_iter: 500
+  save_per_iter: 1000
+  test_per_iter: 1000
